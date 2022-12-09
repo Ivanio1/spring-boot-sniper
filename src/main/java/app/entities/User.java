@@ -15,8 +15,9 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
-@Table(name = "UZERS")
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "uzers")
 public class User {
     @Id
     private String username;
