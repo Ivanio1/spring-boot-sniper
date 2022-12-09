@@ -13,8 +13,9 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
-@Table(name = "POINTZ")
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "pointz")
 public class Point {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
