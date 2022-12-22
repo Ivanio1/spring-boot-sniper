@@ -3,6 +3,8 @@ package app.service;
 import app.entities.Point;
 import app.entities.User;
 import app.repositories.PointRepo;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,14 +23,14 @@ public class PointsService {
         pointRepo.save(point);
     }
 
-    public List<Point> getAllPointsByUsername(User owner) {
-        return pointRepo.findAllByOwner(owner);
-    }
 
 
     public void updatePoint(Point point) {
         pointRepo.deletePointById(point.getId());
         addPoint(point);
+    }
+    public Page<Point> findAll(Pageable pageable, User owner){
+        return pointRepo.findAllByOwner(pageable,owner);
     }
 
     public void deletePoint(Point point) {

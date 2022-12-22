@@ -5,6 +5,8 @@ import app.entities.Point;
 import app.entities.User;
 import app.service.PointsService;
 import app.service.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +24,7 @@ public class PointsController {
 
 
     @PostMapping()
-    public ResponseMessage addPoint(@RequestBody Point point) {
+    public ResponseMessage addPoint(@RequestBody Point point,Pageable pageable) {
         long startTime = System.nanoTime();
         if ((point.getR() == null) || (point.getX() == null) || (point.getY() == null) ||
                 (point.getY().isNaN()) || (point.getX().isNaN()) || (point.getR().isNaN()))
@@ -35,13 +37,15 @@ public class PointsController {
             point.setExtime(elatedTime);
             point.setOwner(user);
             pointsService.addPoint(point);
-            List<Point> list = pointsService.getAllPointsByUsername(user);
+            Page<Point> list = pointsService.findAll(pageable,user);
             return new ResponseMessage(200, list);
         } else return new ResponseMessage(400, "No owner!");
     }
 
+
+
     @GetMapping()
-    public ResponseMessage showAllPointByUsername() {
+    public ResponseMessage showPaginatedPoints(Pageable pageable) {
         User user = userService.getUser(SecurityContextHolder.getContext().getAuthentication().getName());
         try {
             if ((user.getUsername() == null) || (user.getUsername().isEmpty()))
@@ -49,21 +53,22 @@ public class PointsController {
         } catch (NullPointerException ex) {
             return new ResponseMessage(400, null);
         }
-        List<Point> list = pointsService.getAllPointsByUsername(user);
+        Page<Point> list = pointsService.findAll(pageable,user);
         return new ResponseMessage(200, list);
     }
 
+
+
     @DeleteMapping()
-    public ResponseMessage deletePoint(@RequestBody Point request) {
+    public ResponseMessage deletePoint(@RequestBody Point request,Pageable pageable) {
         User user = userService.getUser(SecurityContextHolder.getContext().getAuthentication().getName());
-        List<Point> list = pointsService.getAllPointsByUsername(user);
+
         if (request.getId() != null) {
             request.setOwner(user);
             pointsService.deletePoint(request);
-            list = pointsService.getAllPointsByUsername(user);
-
+            Page<Point> list = pointsService.findAll(pageable,user);
             return new ResponseMessage(200, list);
-        } else return new ResponseMessage(400, list);
+        } else return new ResponseMessage(400, "list");
     }
 
     public PointsController(PointsService pointsService, UserService userService) {

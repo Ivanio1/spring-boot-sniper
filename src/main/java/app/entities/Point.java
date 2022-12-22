@@ -2,6 +2,8 @@ package app.entities;
 
 import lombok.*;
 import org.hibernate.Hibernate;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -20,7 +22,7 @@ public class Point {
     private Double x;
     private Double y;
     private Double r;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch=FetchType.LAZY, cascade = CascadeType.REFRESH)
     private User owner;
     private Boolean checked;
     private String currtime;
